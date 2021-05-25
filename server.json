@@ -1,0 +1,13 @@
+{
+    "data": [
+        { "id": 0, "name": "Morango", "price": 10.00 },
+        { "id": 1, "name": "Banana", "price": 10.00 },
+        { "id": 2, "name": "Maçã", "price": 10.00 },
+        { "id": 3, "name": "Pera", "price": 10.00 },
+        { "id": 4, "name": "Uva", "price": 10.00 },
+        { "id": 5, "name": "Kiwi", "price": 10.00 }
+    ],
+    "datacontent": [
+        { "id": 3000, "name": "Tester"}
+    ]
+}
