@@ -1,31 +1,48 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { api } from './service/api'
+import { uuid } from 'uuidv4'
+
+import { api } from './service/api';
 
 interface IData {
-  id: number;
+  id: string;
   name: string;
   price: number;
 }
 
 const App: React.FC = () => {
   const [ data, setData ] = useState<IData[]>([]);
-  const [ name, setName ] = useState<string>('')
+  const [isLoad, setIsLoad] = useState<boolean>(false);
+  const [fruta, setFruta] = useState<string>('')
+  const [frutaValue, setFrutaValue] = useState<any>()
 
   useEffect( () => {
+    console.log(isLoad)
     api.get('data').then(
       response => {
         setData(response.data)
       }
     )
-  }, [] );
+  }, [isLoad] );
 
   const convertoToCurrency = useCallback(
     (value: number) => {
-      Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL'})
+      return Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL'})
       .format(value)
     }, [])
 
+    const addToApi = useCallback(
+      () => {
+        setIsLoad(true)
+        api.post('data', {
+          id: uuid,
+          name: fruta,
+          price: frutaValue
+        }).then(
+          response => alert('Tudo certo')
+        ).catch(e => alert('error')).finally(() => { setIsLoad(false) })
+      }, [uuid, fruta, frutaValue]
+    )
 
   return (
     <div>
@@ -35,16 +52,27 @@ const App: React.FC = () => {
           <li key={fruta.id}>
             {fruta.name} | {convertoToCurrency(fruta.price)}
           </li>
-      ))}
-
-      
+      ))}      
       </ul>
       <hr />
-      <h1>{name}</h1>
 
-      <hr />
-
-      <input type="text" onChange={ e => setName(e.target.value)} placeholder="informe seu nome"/>
+      { isLoad ? (
+        <div>
+          <p>Aguade, carregando....</p>
+        </div>
+      ) : (
+        <div>
+          <input type="text"
+            onChange={e => setFruta(e.target.value)}
+            placeholder="Qual fruta"
+          />
+          <input type="number"
+            onChange={e => setFrutaValue(parseFloat(e.target.value))}
+            placeholder="qual valor"
+          />
+          <button onClick={addToApi} >Adicionar</button>
+        </div>
+      )}
     </div>
   );
 }
